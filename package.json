@@ -1,0 +1,16 @@
+{
+  "name": "free-mobile-conso-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "Pupeeter based Node.js API to get usage data from french carrier \"Free Mobile\"",
+  "dependencies": {
+    "express": "^4.18.1",
+    "puppeteer": "^15.5.0"
+  },
+}
