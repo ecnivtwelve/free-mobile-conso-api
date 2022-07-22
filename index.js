@@ -8,7 +8,7 @@ app.get('/conso', (req, res) => {
   let pass = req.query.pass;
   
   (async () => {
-	const browser = await puppeteer.launch({ headless: true })
+	const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
 	const page = await browser.newPage();
 	await page.goto('https://mobile.free.fr/account/conso-et-factures');
 	
