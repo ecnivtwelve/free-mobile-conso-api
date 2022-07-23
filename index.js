@@ -44,17 +44,17 @@ app.get('/conso', (req, res) => {
 	let dataValue = await page.evaluate(el => el.textContent, dataElement)
 	let dataString = dataValue.split("\n");
 	  
-	let usage = parseFloat(dataString[3].split("/ ")[1].trim().split("Mo")[0].replace(',', '.'));
+	let usage = parseFloat(dataString[2].trim().split("Mo")[0].replace(',', '.'));
 	let total = parseFloat(dataString[3].split("/ ")[1].trim().split("Mo")[0].replace(',', '.'));
-	  
+	
 	if(total === 50) {
 	   usage = (usage / 1000).toFixed(2)
 	   total = (total / 1000).toFixed(2)
 	}
 	
 	let dataResult = [{
-		"usedGo" + scale: parseFloat(dataString[2].trim().split("Mo")[0].replace(',', '.')),
-		"totalGo": parseFloat(dataString[3].split("/ ")[1].trim().split("Mo")[0].replace(',', '.')),
+		"usedGo": usage,
+		"totalGo": total,
 		"hors_forfaitEUR": parseFloat(dataString[4].split(" : ")[1].trim().split('€')[0])
 	}]
 	
