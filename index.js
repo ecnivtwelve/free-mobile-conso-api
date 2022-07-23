@@ -114,6 +114,71 @@ app.get('/conso', (req, res) => {
   })();
 })
 
+app.get('/messagerie', (req, res) => {
+  console.log("Querying voicemail for " + req.query.user);
+	
+  let identifiant = req.query.user;
+  let pass = req.query.pass;
+  
+  (async () => {
+	const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
+	const page = await browser.newPage();
+	await page.goto('https://mobile.free.fr/account/messagerie-vocale');
+	
+	await page.type('input[name=login-ident]', identifiant);
+	await page.type('input[name=login-pwd]', pass);
+	
+	await page.click('button[name=bt-login]');
+	
+	await page.waitForNavigation()
+	
+	// messages-list
+	const elHandleArray = await page.$$('.msg')
+	
+	let allMessages = [];
+	
+	await elHandleArray.map(async elm => {
+		let msgData = await page.evaluate(el => el.textContent, elm);
+	    let dataParsed = msgData.split("\n");
+		
+		let dateString = dataParsed[5]
+		let dateHour = dataParsed[6].split("à ")[1].split("(")[0]
+		let fullDate = (dateString + " " + dateHour).trim()
+		
+		let length = (dataParsed[6].split("(")[1].split(")")[0]).trim()
+		
+		let newMessage = {
+			"number": dataParsed[3].trim(),
+			"dateString" : fullDate,
+			"length" : length,
+			"audioURL" : null
+		}
+		
+		allMessages.push(newMessage)
+	})
+	
+	// audio
+	const elAudioArray = await page.$$('source')
+	let loop = 0;
+	await elAudioArray.map(async audio => {
+		let audioData = await page.evaluate(el => el.src, audio);
+		allMessages[loop].audioURL = audioData
+		
+		loop = loop + 1;
+	});
+	
+	setTimeout(function(){
+		res.send(allMessages)
+	}, 1000)
+  })();
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+process.on('SIGINT', function() {
+  console.log( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
+  // some other closing procedures go here
+  process.exit(0);
+});
