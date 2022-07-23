@@ -1,7 +1,11 @@
 const express = require('express')
 const puppeteer = require('puppeteer');
 const app = express()
-const port = 80
+const port = process.env.PORT || 80;
+
+app.get('/', (req, res) => {
+	res.send("This is an API for Free Mobile usage data.");
+});
 
 app.get('/conso', (req, res) => {
   console.log("Querying data for " + req.query.user);
